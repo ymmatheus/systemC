@@ -1,0 +1,322 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8C8BAECA09D01D53009EFE72 /* simple_bus_arbiter_if.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEB509D01D53009EFE72 /* simple_bus_arbiter_if.h */; };
+		8C8BAECB09D01D53009EFE72 /* simple_bus_arbiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEB609D01D53009EFE72 /* simple_bus_arbiter.cpp */; };
+		8C8BAECC09D01D53009EFE72 /* simple_bus_arbiter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEB709D01D53009EFE72 /* simple_bus_arbiter.h */; };
+		8C8BAECD09D01D53009EFE72 /* simple_bus_blocking_if.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEB809D01D53009EFE72 /* simple_bus_blocking_if.h */; };
+		8C8BAECE09D01D53009EFE72 /* simple_bus_direct_if.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEB909D01D53009EFE72 /* simple_bus_direct_if.h */; };
+		8C8BAECF09D01D53009EFE72 /* simple_bus_fast_mem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEBA09D01D53009EFE72 /* simple_bus_fast_mem.h */; };
+		8C8BAED009D01D53009EFE72 /* simple_bus_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEBB09D01D53009EFE72 /* simple_bus_main.cpp */; };
+		8C8BAED109D01D53009EFE72 /* simple_bus_master_blocking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEBC09D01D53009EFE72 /* simple_bus_master_blocking.cpp */; };
+		8C8BAED209D01D53009EFE72 /* simple_bus_master_blocking.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEBD09D01D53009EFE72 /* simple_bus_master_blocking.h */; };
+		8C8BAED309D01D53009EFE72 /* simple_bus_master_direct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEBE09D01D53009EFE72 /* simple_bus_master_direct.cpp */; };
+		8C8BAED409D01D53009EFE72 /* simple_bus_master_direct.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEBF09D01D53009EFE72 /* simple_bus_master_direct.h */; };
+		8C8BAED509D01D53009EFE72 /* simple_bus_master_non_blocking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEC009D01D53009EFE72 /* simple_bus_master_non_blocking.cpp */; };
+		8C8BAED609D01D53009EFE72 /* simple_bus_master_non_blocking.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC109D01D53009EFE72 /* simple_bus_master_non_blocking.h */; };
+		8C8BAED709D01D53009EFE72 /* simple_bus_non_blocking_if.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC209D01D53009EFE72 /* simple_bus_non_blocking_if.h */; };
+		8C8BAED809D01D53009EFE72 /* simple_bus_request.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC309D01D53009EFE72 /* simple_bus_request.h */; };
+		8C8BAED909D01D53009EFE72 /* simple_bus_slave_if.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC409D01D53009EFE72 /* simple_bus_slave_if.h */; };
+		8C8BAEDA09D01D53009EFE72 /* simple_bus_slow_mem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC509D01D53009EFE72 /* simple_bus_slow_mem.h */; };
+		8C8BAEDB09D01D53009EFE72 /* simple_bus_test.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC609D01D53009EFE72 /* simple_bus_test.h */; };
+		8C8BAEDC09D01D53009EFE72 /* simple_bus_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEC709D01D53009EFE72 /* simple_bus_tools.cpp */; };
+		8C8BAEDD09D01D53009EFE72 /* simple_bus_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEC809D01D53009EFE72 /* simple_bus_types.cpp */; };
+		8C8BAEDE09D01D53009EFE72 /* simple_bus_types.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEC909D01D53009EFE72 /* simple_bus_types.h */; };
+		8C8BAEE009D01D61009EFE72 /* simple_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C8BAEDF09D01D61009EFE72 /* simple_bus.cpp */; };
+		8C8BAEE209D01D6D009EFE72 /* simple_bus.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8C8BAEE109D01D6D009EFE72 /* simple_bus.h */; };
+		8C991A9909D2B40900EDEA4B /* libsystemc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C991A9809D2B40900EDEA4B /* libsystemc.a */; };
+		8DD76F6A0486A84900D96B5E /* simple_bus.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* simple_bus.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F690486A84900D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F6A0486A84900D96B5E /* simple_bus.1 in CopyFiles */,
+				8C8BAECA09D01D53009EFE72 /* simple_bus_arbiter_if.h in CopyFiles */,
+				8C8BAECC09D01D53009EFE72 /* simple_bus_arbiter.h in CopyFiles */,
+				8C8BAECD09D01D53009EFE72 /* simple_bus_blocking_if.h in CopyFiles */,
+				8C8BAECE09D01D53009EFE72 /* simple_bus_direct_if.h in CopyFiles */,
+				8C8BAECF09D01D53009EFE72 /* simple_bus_fast_mem.h in CopyFiles */,
+				8C8BAED209D01D53009EFE72 /* simple_bus_master_blocking.h in CopyFiles */,
+				8C8BAED409D01D53009EFE72 /* simple_bus_master_direct.h in CopyFiles */,
+				8C8BAED609D01D53009EFE72 /* simple_bus_master_non_blocking.h in CopyFiles */,
+				8C8BAED709D01D53009EFE72 /* simple_bus_non_blocking_if.h in CopyFiles */,
+				8C8BAED809D01D53009EFE72 /* simple_bus_request.h in CopyFiles */,
+				8C8BAED909D01D53009EFE72 /* simple_bus_slave_if.h in CopyFiles */,
+				8C8BAEDA09D01D53009EFE72 /* simple_bus_slow_mem.h in CopyFiles */,
+				8C8BAEDB09D01D53009EFE72 /* simple_bus_test.h in CopyFiles */,
+				8C8BAEDE09D01D53009EFE72 /* simple_bus_types.h in CopyFiles */,
+				8C8BAEE209D01D6D009EFE72 /* simple_bus.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8C8BAEB509D01D53009EFE72 /* simple_bus_arbiter_if.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_arbiter_if.h; sourceTree = "<group>"; };
+		8C8BAEB609D01D53009EFE72 /* simple_bus_arbiter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_arbiter.cpp; sourceTree = "<group>"; };
+		8C8BAEB709D01D53009EFE72 /* simple_bus_arbiter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_arbiter.h; sourceTree = "<group>"; };
+		8C8BAEB809D01D53009EFE72 /* simple_bus_blocking_if.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_blocking_if.h; sourceTree = "<group>"; };
+		8C8BAEB909D01D53009EFE72 /* simple_bus_direct_if.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_direct_if.h; sourceTree = "<group>"; };
+		8C8BAEBA09D01D53009EFE72 /* simple_bus_fast_mem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_fast_mem.h; sourceTree = "<group>"; };
+		8C8BAEBB09D01D53009EFE72 /* simple_bus_main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_main.cpp; sourceTree = "<group>"; };
+		8C8BAEBC09D01D53009EFE72 /* simple_bus_master_blocking.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_master_blocking.cpp; sourceTree = "<group>"; };
+		8C8BAEBD09D01D53009EFE72 /* simple_bus_master_blocking.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_master_blocking.h; sourceTree = "<group>"; };
+		8C8BAEBE09D01D53009EFE72 /* simple_bus_master_direct.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_master_direct.cpp; sourceTree = "<group>"; };
+		8C8BAEBF09D01D53009EFE72 /* simple_bus_master_direct.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_master_direct.h; sourceTree = "<group>"; };
+		8C8BAEC009D01D53009EFE72 /* simple_bus_master_non_blocking.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_master_non_blocking.cpp; sourceTree = "<group>"; };
+		8C8BAEC109D01D53009EFE72 /* simple_bus_master_non_blocking.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_master_non_blocking.h; sourceTree = "<group>"; };
+		8C8BAEC209D01D53009EFE72 /* simple_bus_non_blocking_if.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_non_blocking_if.h; sourceTree = "<group>"; };
+		8C8BAEC309D01D53009EFE72 /* simple_bus_request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_request.h; sourceTree = "<group>"; };
+		8C8BAEC409D01D53009EFE72 /* simple_bus_slave_if.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_slave_if.h; sourceTree = "<group>"; };
+		8C8BAEC509D01D53009EFE72 /* simple_bus_slow_mem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_slow_mem.h; sourceTree = "<group>"; };
+		8C8BAEC609D01D53009EFE72 /* simple_bus_test.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_test.h; sourceTree = "<group>"; };
+		8C8BAEC709D01D53009EFE72 /* simple_bus_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_tools.cpp; sourceTree = "<group>"; };
+		8C8BAEC809D01D53009EFE72 /* simple_bus_types.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus_types.cpp; sourceTree = "<group>"; };
+		8C8BAEC909D01D53009EFE72 /* simple_bus_types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus_types.h; sourceTree = "<group>"; };
+		8C8BAEDF09D01D61009EFE72 /* simple_bus.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = simple_bus.cpp; sourceTree = "<group>"; };
+		8C8BAEE109D01D6D009EFE72 /* simple_bus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = simple_bus.h; sourceTree = "<group>"; };
+		8C991A9809D2B40900EDEA4B /* libsystemc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsystemc.a; path = "../../../../../Development/SystemC/systemc_2_1.oct_12_2004.beta/lib-macosx/libsystemc.a"; sourceTree = SOURCE_ROOT; };
+		8DD76F6C0486A84900D96B5E /* simple_bus */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = simple_bus; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859E8B029090EE04C91782 /* simple_bus.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = simple_bus.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F660486A84900D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C991A9909D2B40900EDEA4B /* libsystemc.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* simple_bus */ = {
+			isa = PBXGroup;
+			children = (
+				8C991A9809D2B40900EDEA4B /* libsystemc.a */,
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859E8C029090F304C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = simple_bus;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				8C8BAEE109D01D6D009EFE72 /* simple_bus.h */,
+				8C8BAEDF09D01D61009EFE72 /* simple_bus.cpp */,
+				8C8BAEB509D01D53009EFE72 /* simple_bus_arbiter_if.h */,
+				8C8BAEB609D01D53009EFE72 /* simple_bus_arbiter.cpp */,
+				8C8BAEB709D01D53009EFE72 /* simple_bus_arbiter.h */,
+				8C8BAEB809D01D53009EFE72 /* simple_bus_blocking_if.h */,
+				8C8BAEB909D01D53009EFE72 /* simple_bus_direct_if.h */,
+				8C8BAEBA09D01D53009EFE72 /* simple_bus_fast_mem.h */,
+				8C8BAEBB09D01D53009EFE72 /* simple_bus_main.cpp */,
+				8C8BAEBC09D01D53009EFE72 /* simple_bus_master_blocking.cpp */,
+				8C8BAEBD09D01D53009EFE72 /* simple_bus_master_blocking.h */,
+				8C8BAEBE09D01D53009EFE72 /* simple_bus_master_direct.cpp */,
+				8C8BAEBF09D01D53009EFE72 /* simple_bus_master_direct.h */,
+				8C8BAEC009D01D53009EFE72 /* simple_bus_master_non_blocking.cpp */,
+				8C8BAEC109D01D53009EFE72 /* simple_bus_master_non_blocking.h */,
+				8C8BAEC209D01D53009EFE72 /* simple_bus_non_blocking_if.h */,
+				8C8BAEC309D01D53009EFE72 /* simple_bus_request.h */,
+				8C8BAEC409D01D53009EFE72 /* simple_bus_slave_if.h */,
+				8C8BAEC509D01D53009EFE72 /* simple_bus_slow_mem.h */,
+				8C8BAEC609D01D53009EFE72 /* simple_bus_test.h */,
+				8C8BAEC709D01D53009EFE72 /* simple_bus_tools.cpp */,
+				8C8BAEC809D01D53009EFE72 /* simple_bus_types.cpp */,
+				8C8BAEC909D01D53009EFE72 /* simple_bus_types.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76F6C0486A84900D96B5E /* simple_bus */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C6859E8C029090F304C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859E8B029090EE04C91782 /* simple_bus.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F620486A84900D96B5E /* simple_bus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C5B1FE210974898006017BB /* Build configuration list for PBXNativeTarget "simple_bus" */;
+			buildPhases = (
+				8DD76F640486A84900D96B5E /* Sources */,
+				8DD76F660486A84900D96B5E /* Frameworks */,
+				8DD76F690486A84900D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = simple_bus;
+			productInstallPath = "$(HOME)/bin";
+			productName = simple_bus;
+			productReference = 8DD76F6C0486A84900D96B5E /* simple_bus */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 8C5B1FE110974898006017BB /* Build configuration list for PBXProject "simple_bus" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* simple_bus */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F620486A84900D96B5E /* simple_bus */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F640486A84900D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C8BAECB09D01D53009EFE72 /* simple_bus_arbiter.cpp in Sources */,
+				8C8BAED009D01D53009EFE72 /* simple_bus_main.cpp in Sources */,
+				8C8BAED109D01D53009EFE72 /* simple_bus_master_blocking.cpp in Sources */,
+				8C8BAED309D01D53009EFE72 /* simple_bus_master_direct.cpp in Sources */,
+				8C8BAED509D01D53009EFE72 /* simple_bus_master_non_blocking.cpp in Sources */,
+				8C8BAEDC09D01D53009EFE72 /* simple_bus_tools.cpp in Sources */,
+				8C8BAEDD09D01D53009EFE72 /* simple_bus_types.cpp in Sources */,
+				8C8BAEE009D01D61009EFE72 /* simple_bus.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8C5B1FDB10974898006017BB /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		8C5B1FDC10974898006017BB /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		8C5B1FDD10974898006017BB /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		8C5B1FDE10974898006017BB /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Users/ricardo/Development/SystemC/systemc_2_1.oct_12_2004.beta/include;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "/Users/ricardo/Development/SystemC/systemc_2_1.oct_12_2004.beta/lib-macosx";
+				PREBINDING = NO;
+				PRODUCT_NAME = simple_bus;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		8C5B1FDF10974898006017BB /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "/Users/ricardo/Development/SystemC/systemc_2_1.oct_12_2004.beta/lib-macosx";
+				PREBINDING = NO;
+				PRODUCT_NAME = simple_bus;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		8C5B1FE010974898006017BB /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "/Users/ricardo/Development/SystemC/systemc_2_1.oct_12_2004.beta/lib-macosx";
+				PREBINDING = NO;
+				PRODUCT_NAME = simple_bus;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8C5B1FE110974898006017BB /* Build configuration list for PBXProject "simple_bus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C5B1FDB10974898006017BB /* Development */,
+				8C5B1FDC10974898006017BB /* Deployment */,
+				8C5B1FDD10974898006017BB /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		8C5B1FE210974898006017BB /* Build configuration list for PBXNativeTarget "simple_bus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8C5B1FDE10974898006017BB /* Development */,
+				8C5B1FDF10974898006017BB /* Deployment */,
+				8C5B1FE010974898006017BB /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

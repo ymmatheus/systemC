@@ -1,0 +1,1253 @@
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus.h : The bus.
+
+		 The bus is derived from the following interfaces, and
+	         contains the implementation of these: 
+		 - blocking : burst_read/burst_write
+		 - non-blocking : read/write/get_status
+		 - direct : direct_read/direct_write
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_h
+#define __simple_bus_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_request.h"
+#include "simple_bus_direct_if.h"
+#include "simple_bus_non_blocking_if.h"
+#include "simple_bus_blocking_if.h"
+#include "simple_bus_arbiter_if.h"
+#include "simple_bus_slave_if.h"
+
+
+class simple_bus
+  : public simple_bus_direct_if
+  , public simple_bus_non_blocking_if
+  , public simple_bus_blocking_if
+  , public sc_module
+{
+public:
+  // ports
+  sc_in_clk clock;
+  sc_port<simple_bus_arbiter_if> arbiter_port;
+  sc_port<simple_bus_slave_if, 0> slave_port;
+
+  SC_HAS_PROCESS(simple_bus);
+
+  // constructor
+  simple_bus(sc_module_name name_
+             , bool verbose = false)
+    : sc_module(name_)
+    , m_verbose(verbose)
+    , m_current_request(0)
+  {
+    // process declaration
+    SC_METHOD(main_action);
+    dont_initialize();
+    sensitive_neg << clock;
+  }
+
+  // process
+  void main_action();
+
+  // direct BUS interface
+  bool direct_read(int *data, unsigned int address);
+  bool direct_write(int *data, unsigned int address);
+
+  // non-blocking BUS interface
+  void read(unsigned int unique_priority
+	    , int *data
+	    , unsigned int address
+	    , bool lock = false);
+  void write(unsigned int unique_priority
+	     , int *data
+	     , unsigned int address
+	     , bool lock = false);
+  simple_bus_status get_status(unsigned int unique_priority);
+
+  // blocking BUS interface
+  simple_bus_status burst_read(unsigned int unique_priority
+			       , int *data
+			       , unsigned int start_address
+			       , unsigned int length = 1
+			       , bool lock = false);
+  simple_bus_status burst_write(unsigned int unique_priority
+				, int *data
+				, unsigned int start_address
+				, unsigned int length = 1
+				, bool lock = false);
+
+private:
+  void handle_request();
+  void end_of_elaboration();
+  simple_bus_slave_if * get_slave(unsigned int address);
+  simple_bus_request * get_request(unsigned int priority);
+  simple_bus_request * get_next_request();
+  void clear_locks();
+
+private:
+  bool m_verbose;
+  simple_bus_request_vec m_requests;
+  simple_bus_request *m_current_request;
+
+}; // end class simple_bus
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_arbiter.h : The arbitration unit.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_arbiter_h
+#define __simple_bus_arbiter_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_request.h"
+#include "simple_bus_arbiter_if.h"
+
+
+class simple_bus_arbiter
+  : public simple_bus_arbiter_if
+  , public sc_module
+{
+public:
+  // constructor
+  simple_bus_arbiter(sc_module_name name_
+                     , bool verbose = false)
+    : sc_module(name_)
+    , m_verbose(verbose)
+  {}
+
+  simple_bus_request *arbitrate(const simple_bus_request_vec &requests);
+
+private:
+  bool m_verbose;
+
+}; // end class simple_bus_arbiter
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_arbiter_if.h : The arbiter interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_arbiter_if_h
+#define __simple_bus_arbiter_if_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+
+
+class simple_bus_arbiter_if
+  : public virtual sc_interface
+{
+public:
+  virtual simple_bus_request * 
+    arbitrate(const simple_bus_request_vec &requests) = 0;
+
+}; // end class simple_bus_arbiter_if
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_blocking_if.h : The blocking bus interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_blocking_if_h
+#define __simple_bus_blocking_if_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+
+class simple_bus_blocking_if
+  : public virtual sc_interface
+{
+public:
+  // blocking BUS interface
+  virtual simple_bus_status burst_read(unsigned int unique_priority
+				       , int *data
+				       , unsigned int start_address
+				       , unsigned int length = 1
+				       , bool lock = false) = 0;
+  virtual simple_bus_status burst_write(unsigned int unique_priority
+					, int *data
+					, unsigned int start_address
+					, unsigned int length = 1
+					, bool lock = false) = 0;
+
+}; // end class simple_bus_blocking_if
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_direct_if.h : The direct BUS/Slave interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_direct_if_h
+#define __simple_bus_direct_if_h
+
+#include <systemc.h>
+
+class simple_bus_direct_if
+  : public virtual sc_interface
+{
+public:
+  // direct BUS/Slave interface
+  virtual bool direct_read(int *data, unsigned int address) = 0;
+  virtual bool direct_write(int *data, unsigned int address) = 0;
+
+}; // end class simple_bus_direct_if
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_fast_mem.h : The memory (slave) without wait states.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_fast_mem_h
+#define __simple_bus_fast_mem_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_slave_if.h"
+
+
+class simple_bus_fast_mem
+  : public simple_bus_slave_if
+  , public sc_module
+{
+public:
+  // constructor
+  simple_bus_fast_mem(sc_module_name name_
+		      , unsigned int start_address
+		      , unsigned int end_address)
+    : sc_module(name_)
+    , m_start_address(start_address)
+    , m_end_address(end_address)
+  {
+    sc_assert(m_start_address <= m_end_address);
+    sc_assert((m_end_address-m_start_address+1)%4 == 0);
+    unsigned int size = (m_end_address-m_start_address+1)/4;
+    MEM = new int [size];
+    for (unsigned int i = 0; i < size; ++i)
+      MEM[i] = 0;
+  }
+
+  // destructor
+  ~simple_bus_fast_mem();
+
+  // direct Slave Interface
+  bool direct_read(int *data, unsigned int address);
+  bool direct_write(int *data, unsigned int address);
+
+  // Slave Interface
+  simple_bus_status read(int *data, unsigned int address);
+  simple_bus_status write(int *data, unsigned int address);
+
+  unsigned int start_address() const;
+  unsigned int end_address() const;
+
+private:
+  int * MEM;
+  unsigned int m_start_address;
+  unsigned int m_end_address;
+
+}; // end class simple_bus_fast_mem
+
+inline bool simple_bus_fast_mem::direct_read(int *data, unsigned int address)
+{
+  return (read(data, address) == SIMPLE_BUS_OK);
+}
+
+inline bool simple_bus_fast_mem::direct_write(int *data, unsigned int address)
+{
+  return (write(data, address) == SIMPLE_BUS_OK);
+}
+
+inline simple_bus_status simple_bus_fast_mem::read(int *data
+						   , unsigned int address)
+{
+  *data = MEM[(address - m_start_address)/4];
+  return SIMPLE_BUS_OK;
+}
+
+inline simple_bus_status simple_bus_fast_mem::write(int *data
+						    , unsigned int address)
+{
+  MEM[(address - m_start_address)/4] = *data;
+  return SIMPLE_BUS_OK;
+}
+
+inline  simple_bus_fast_mem::~simple_bus_fast_mem()
+{
+  if (MEM) delete [] MEM;
+  MEM = (int *)0;
+}
+
+inline unsigned int simple_bus_fast_mem::start_address() const
+{
+  return m_start_address;
+}
+
+inline unsigned int simple_bus_fast_mem::end_address() const
+{
+  return m_end_address;
+}
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_master_blocking.h : The master using the blocking BUS interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_master_blocking_h
+#define __simple_bus_master_blocking_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_blocking_if.h"
+
+
+SC_MODULE(simple_bus_master_blocking)
+{
+  // ports
+  sc_in_clk clock;
+  sc_port<simple_bus_blocking_if> bus_port;
+
+  SC_HAS_PROCESS(simple_bus_master_blocking);
+
+  // constructor
+  simple_bus_master_blocking(sc_module_name name_
+			     , unsigned int unique_priority
+			     , unsigned int address
+                             , bool lock
+                             , int timeout)
+    : sc_module(name_)
+    , m_unique_priority(unique_priority)
+    , m_address(address)
+    , m_lock(lock)
+    , m_timeout(timeout)
+  {
+    // process declaration
+    SC_THREAD(main_action);
+    sensitive_pos << clock;
+  }
+  
+  // process
+  void main_action();
+
+private:
+  unsigned int m_unique_priority;
+  unsigned int m_address;
+  bool m_lock;
+  int m_timeout;
+
+}; // end class simple_bus_master_blocking
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_master_direct.h : The monitor (master) using the direct BUS
+                               interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_master_direct_h
+#define __simple_bus_master_direct_h
+
+#include <systemc.h>
+
+#include "simple_bus_direct_if.h"
+
+
+SC_MODULE(simple_bus_master_direct)
+{
+  // ports
+  sc_in_clk clock;
+  sc_port<simple_bus_direct_if> bus_port;
+
+  SC_HAS_PROCESS(simple_bus_master_direct);
+
+  // constructor
+  simple_bus_master_direct(sc_module_name name_
+                           , unsigned int address
+                           , int timeout
+                           , bool verbose = true)
+    : sc_module(name_)
+    , m_address(address)
+    , m_timeout(timeout)
+    , m_verbose(verbose)
+  {
+    // process declaration
+    SC_THREAD(main_action);
+  }
+
+  // process
+  void main_action();
+
+private:
+  unsigned int m_address;
+  int m_timeout;
+  bool m_verbose;
+
+}; // end class simple_bus_master_direct
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_master_non_blocking.h : The master using the non-blocking BUS
+                                     interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_master_non_blocking_h
+#define __simple_bus_master_non_blocking_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_non_blocking_if.h"
+
+
+SC_MODULE(simple_bus_master_non_blocking)
+{
+  // ports
+  sc_in_clk clock;
+  sc_port<simple_bus_non_blocking_if> bus_port;
+
+  SC_HAS_PROCESS(simple_bus_master_non_blocking);
+
+  // constructor
+  simple_bus_master_non_blocking(sc_module_name _name
+				 , unsigned int unique_priority
+                                 , unsigned int start_address
+                                 , bool lock
+                                 , int timeout)
+    : sc_module(_name)
+    , m_unique_priority(unique_priority)
+    , m_start_address(start_address)
+    , m_lock(lock)
+    , m_timeout(timeout)
+  {
+    // process declaration
+    SC_THREAD(main_action);
+    sensitive_pos << clock;
+  }
+  
+  // process
+  void main_action();
+
+private:
+  unsigned int m_unique_priority;
+  unsigned int m_start_address;
+  bool m_lock;
+  int m_timeout;
+
+}; // end class simple_bus_master_non_blocking
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_non_blocking_if.h : The non-blocking BUS interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_non_blocking_if_h
+#define __simple_bus_non_blocking_if_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+
+class simple_bus_non_blocking_if
+  : public virtual sc_interface
+{
+public:
+  // non-blocking BUS interface
+  virtual void read(unsigned int unique_priority
+		    , int *data
+		    , unsigned int address
+		    , bool lock = false) = 0;
+  virtual void write(unsigned int unique_priority
+		     , int *data
+		     , unsigned int address
+		     , bool lock = false) = 0;
+
+  virtual simple_bus_status get_status(unsigned int unique_priority) = 0;
+
+}; // end class simple_bus_non_blocking_if
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_request.h : The bus interface request form.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_request_h
+#define __simple_bus_request_h
+
+enum simple_bus_lock_status { SIMPLE_BUS_LOCK_NO = 0
+			      , SIMPLE_BUS_LOCK_SET
+			      , SIMPLE_BUS_LOCK_GRANTED 
+};
+
+struct simple_bus_request
+{
+  // parameters
+  unsigned int priority;
+
+  // request parameters
+  bool do_write;
+  unsigned int address;
+  unsigned int end_address;
+  int *data;
+  simple_bus_lock_status lock;
+
+  // request status
+  sc_event transfer_done;
+  simple_bus_status status;
+
+  // default constructor
+  simple_bus_request();
+};
+
+inline simple_bus_request::simple_bus_request()
+  : priority(0)
+  , do_write(false)
+  , address(0)
+  , end_address(0)
+  , data((int *)0)
+  , lock(SIMPLE_BUS_LOCK_NO)
+  , status(SIMPLE_BUS_OK)
+{}
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_slave_if.h : The Slave interface.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_slave_if_h
+#define __simple_bus_slave_if_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_direct_if.h"
+
+
+class simple_bus_slave_if
+  : public simple_bus_direct_if
+{
+public:
+  // Slave interface
+  virtual simple_bus_status read(int *data, unsigned int address) = 0;
+  virtual simple_bus_status write(int *data, unsigned int address) = 0;
+
+  virtual unsigned int start_address() const = 0;
+  virtual unsigned int end_address() const = 0;
+
+}; // end class simple_bus_slave_if
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_slow_mem.h : Slave : The memory (slave) with wait states.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_slow_mem_h
+#define __simple_bus_slow_mem_h
+
+#include <systemc.h>
+
+#include "simple_bus_types.h"
+#include "simple_bus_slave_if.h"
+
+
+class simple_bus_slow_mem
+  : public simple_bus_slave_if
+  , public sc_module
+{
+public:
+  // ports
+  sc_in_clk clock;
+
+  SC_HAS_PROCESS(simple_bus_slow_mem);
+
+  // constructor
+  simple_bus_slow_mem(sc_module_name name_
+		      , unsigned int start_address
+		      , unsigned int end_address
+		      , unsigned int nr_wait_states)
+    : sc_module(name_)
+    , m_start_address(start_address)
+    , m_end_address(end_address)
+    , m_nr_wait_states(nr_wait_states)
+    , m_wait_count(-1)
+  {
+    // process declaration
+    SC_METHOD(wait_loop);
+    dont_initialize();
+    sensitive_pos << clock;
+
+    sc_assert(m_start_address <= m_end_address);
+    sc_assert((m_end_address-m_start_address+1)%4 == 0);
+    unsigned int size = (m_end_address-m_start_address+1)/4;
+    MEM = new int [size];
+    for (unsigned int i = 0; i < size; ++i)
+      MEM[i] = 0;
+  }
+
+  // destructor
+  ~simple_bus_slow_mem();
+
+  // process
+  void wait_loop();
+
+  // direct Slave Interface
+  bool direct_read(int *data, unsigned int address);
+  bool direct_write(int *data, unsigned int address);
+
+  // Slave Interface
+  simple_bus_status read(int *data, unsigned int address);
+  simple_bus_status write(int *data, unsigned int address);
+
+  unsigned int start_address() const;
+  unsigned int end_address() const;
+
+private:
+  int *MEM;
+  unsigned int m_start_address;
+  unsigned int m_end_address;
+  unsigned int m_nr_wait_states;
+  int m_wait_count;
+
+}; // end class simple_bus_slow_mem
+
+inline  simple_bus_slow_mem::~simple_bus_slow_mem()
+{
+  if (MEM) delete [] MEM;
+  MEM = (int *)0;
+}
+
+inline void simple_bus_slow_mem::wait_loop()
+{
+  if (m_wait_count >= 0) m_wait_count--;
+}
+
+inline bool simple_bus_slow_mem::direct_read(int *data, unsigned int address)
+{
+  *data = MEM[(address - m_start_address)/4];
+  return true;
+}
+
+inline bool simple_bus_slow_mem::direct_write(int *data, unsigned int address)
+{
+  MEM[(address - m_start_address)/4] = *data;
+  return true;
+}
+
+inline simple_bus_status simple_bus_slow_mem::read(int *data
+						   , unsigned int address)
+{
+  // accept a new call if m_wait_count < 0)
+  if (m_wait_count < 0)
+    {
+      m_wait_count = m_nr_wait_states;
+      return SIMPLE_BUS_WAIT;
+    }
+  if (m_wait_count == 0)
+    {
+      *data = MEM[(address - m_start_address)/4];
+      return SIMPLE_BUS_OK;
+    }
+  return SIMPLE_BUS_WAIT;
+}
+
+inline simple_bus_status simple_bus_slow_mem::write(int *data
+						    , unsigned int address)
+{
+  // accept a new call if m_wait_count < 0)
+  if (m_wait_count < 0)
+    {
+      m_wait_count = m_nr_wait_states;
+      return SIMPLE_BUS_WAIT;
+    }
+  if (m_wait_count == 0)
+    {
+      MEM[(address - m_start_address)/4] = *data;
+      return SIMPLE_BUS_OK;
+    }
+  return SIMPLE_BUS_WAIT;
+}
+
+
+inline unsigned int simple_bus_slow_mem::start_address() const
+{
+  return m_start_address;
+}
+
+inline unsigned int simple_bus_slow_mem::end_address() const
+{
+  return m_end_address;
+}
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_test.h : The test bench.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_test_h
+#define __simple_bus_test_h
+
+#include <systemc.h>
+
+#include "simple_bus_master_blocking.h"
+#include "simple_bus_master_non_blocking.h"
+#include "simple_bus_master_direct.h"
+#include "simple_bus_slow_mem.h"
+#include "simple_bus.h"
+#include "simple_bus_fast_mem.h"
+#include "simple_bus_arbiter.h"
+#include "simple_bus_test.h"
+
+SC_MODULE(simple_bus_test)
+{
+  // channels
+  sc_clock C1;
+
+  // module instances
+  simple_bus_master_blocking     *master_b;
+  simple_bus_master_non_blocking *master_nb;
+  simple_bus_master_direct       *master_d;
+  simple_bus_slow_mem            *mem_slow;
+  simple_bus                     *bus;
+  simple_bus_fast_mem            *mem_fast;
+  simple_bus_arbiter             *arbiter;
+
+  // constructor
+  SC_CTOR(simple_bus_test)
+    : C1("C1")
+  {
+    // create instances
+    master_b = new simple_bus_master_blocking("master_b", 4, 0x4c, false, 300);
+    master_nb = new simple_bus_master_non_blocking("master_nb", 3, 0x38, false, 20);
+    master_d = new simple_bus_master_direct("master_d", 0x78, 100);
+    mem_fast = new simple_bus_fast_mem("mem_fast", 0x00, 0x7f);
+    mem_slow = new simple_bus_slow_mem("mem_slow", 0x80, 0xff, 1);
+    // bus = new simple_bus("bus",true); // verbose output
+    bus = new simple_bus("bus");
+    // arbiter = new simple_bus_arbiter("arbiter",true); // verbose output
+    arbiter = new simple_bus_arbiter("arbiter");
+
+    // connect instances
+    master_d->clock(C1);
+    bus->clock(C1);
+    master_b->clock(C1);
+    master_nb->clock(C1);
+    mem_slow->clock(C1);
+    master_d->bus_port(*bus);
+    master_b->bus_port(*bus);
+    master_nb->bus_port(*bus);
+    bus->arbiter_port(*arbiter);
+    bus->slave_port(*mem_slow);
+    bus->slave_port(*mem_fast);
+  }
+
+  // destructor
+  ~simple_bus_test()
+  {
+    if (master_b) {delete master_b; master_b = 0;}
+    if (master_nb) {delete master_nb; master_nb = 0;}
+    if (master_d) {delete master_d; master_d = 0;}
+    if (mem_slow) {delete mem_slow; mem_slow = 0;}
+    if (bus) {delete bus; bus = 0;}
+    if (mem_fast) {delete mem_fast; mem_fast = 0;}
+    if (arbiter) {delete arbiter; arbiter = 0;}
+  }
+
+}; // end class simple_bus_test
+
+#endif
+/*****************************************************************************
+
+  The following code is derived, directly or indirectly, from the SystemC
+  source code Copyright (c) 1996-2004 by all Contributors.
+  All Rights reserved.
+
+  The contents of this file are subject to the restrictions and limitations
+  set forth in the SystemC Open Source License Version 2.4 (the "License");
+  You may not use this file except in compliance with such restrictions and
+  limitations. You may obtain instructions on how to receive a copy of the
+  License at http://www.systemc.org/. Software distributed by Contributors
+  under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+  ANY KIND, either express or implied. See the License for the specific
+  language governing rights and limitations under the License.
+
+ *****************************************************************************/
+
+/*****************************************************************************
+ 
+  simple_bus_types.h : The common types.
+ 
+  Original Author: Ric Hilderink, Synopsys, Inc., 2001-10-11
+ 
+ *****************************************************************************/
+ 
+/*****************************************************************************
+ 
+  MODIFICATION LOG - modifiers, enter your name, affiliation, date and
+  changes you are making here.
+ 
+      Name, Affiliation, Date:
+  Description of Modification:
+ 
+ *****************************************************************************/
+
+#ifndef __simple_bus_types_h
+#define __simple_bus_types_h
+
+#include <stdio.h>
+#include <systemc.h>
+
+enum simple_bus_status { SIMPLE_BUS_OK = 0
+			 , SIMPLE_BUS_REQUEST
+			 , SIMPLE_BUS_WAIT
+			 , SIMPLE_BUS_ERROR };
+
+// needed for more readable debug output
+extern char simple_bus_status_str[4][20]; 
+
+struct simple_bus_request;
+typedef sc_pvector<simple_bus_request *> simple_bus_request_vec;
+
+extern int sb_fprintf(FILE *, const char *, ...);
+
+#endif
