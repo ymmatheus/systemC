@@ -10,7 +10,6 @@ SC_MODULE(execute){
     //saidas
 	sc_out_rv<32> AluOutE, WriteDataE;
 	sc_out<bool> RegWriteEs, MemtoRegEs, MemWriteEs;
-	sc_out_rv<5> WriteRegE;
     //funcao
     void proc();
 
