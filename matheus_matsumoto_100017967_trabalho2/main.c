@@ -21,21 +21,16 @@
  */
 
 #include <stdio.h>
-#ifndef ISA
+
 #include "isa.h"
-#define ISA
-#endif
 
-
+/*
 #ifndef MIPS
-#include "mips.h"
-#define MIPS
-#endif
+    #define MIPS
+    #include "mips.h"
+#endif*/
 
-#ifndef FUNCOES
 #include "funcoes.h"
-#define FUNCOES
-#endif
 
 int main(){
 

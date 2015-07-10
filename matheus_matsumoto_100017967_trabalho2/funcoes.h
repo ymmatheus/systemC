@@ -6,9 +6,11 @@
  */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+
+
 
 /*A função unsigned  int32_t     fetch(uint32_t  pc) lê uma instrução da memória e coloca-
 a em ri, atualizando o pc para apontar para a próxima instrução (soma 4).*/

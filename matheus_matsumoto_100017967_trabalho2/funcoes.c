@@ -6,25 +6,20 @@
  */
 
 
-#ifndef FUNCOES
 #include "funcoes.h"
-#define FUNCOES
-#endif
-
-#ifndef MIPS
-#include "mips.h"
-#define MIPS
-#endif
-
-#ifndef ISA
 #include "isa.h"
-#define ISA
-#endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+    #include "mips.h"
+/*
+#ifndef MIPS
+    #define MIPS
+    #include "mips.h"
+#endif*/
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
 
 /*A função unsigned  int32_t     fetch(uint32_t  pc) lê uma instrução da memória e coloca-
 a em ri, atualizando o pc para apontar para a próxima instrução (soma 4).*/
@@ -86,16 +81,16 @@ void execute(){
         case EXT:
             switch(funct){
                 case ADD:
-                    BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
+                    BREG[rd] = i_add((int32_t*)&BREG[rs], (int32_t*)&BREG[rt]);
                     break;
                 case SUB:
-                    BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
+                    BREG[rd] = i_sub((int32_t*)&BREG[rs], (int32_t*)&BREG[rt]);
                     break;
                 case MULT:
-                    i_mult(&BREG[rs], &BREG[rt]);
+                    i_mult((int32_t*)&BREG[rs], (int32_t*)&BREG[rt]);
                     break;
                 case DIV:
-                    i_div(&BREG[rs], &BREG[rt]);
+                    i_div((int32_t*)&BREG[rs], (int32_t*)&BREG[rt]);
                     break;
                 case AND:
                     BREG[rd] = i_and(&BREG[rs], &BREG[rt]);
@@ -116,13 +111,13 @@ void execute(){
                     i_jr(&BREG[rs]);
                     break;
                 case SLL:
-                    BREG[rt] = i_sll(&BREG[rs], k16);
+                    BREG[rt] = i_sll(&BREG[rs], shamnt);
                     break;
                 case SRL:
-                    BREG[rt] = i_srl(&BREG[rs], k16);
+                    BREG[rt] = i_srl(&BREG[rs], shamnt);
                     break;
                 case SRA:
-                    BREG[rt] = i_sra(&BREG[rs], k16);
+                    BREG[rt] = i_sra(&BREG[rs], shamnt);
                     break;
                 case SYSCALL:
                     i_syscall();
@@ -164,25 +159,25 @@ void execute(){
             i_sh(&BREG[rs], k16, BREG[rt]);
             break;
         case BEQ:
-            i_beq(&BREG[rs], &BREG[rt], k16);
+            i_beq((int32_t*)&BREG[rs], (int32_t*)&BREG[rt], k16);
             break;
         case BNE:
-            i_bne(&BREG[rs], &BREG[rt], k16);
+            i_bne((int32_t*)&BREG[rs], (int32_t*)&BREG[rt], k16);
             break;          
         case BLEZ:
-            i_blez(&BREG[rs], k16);
+            i_blez((int32_t*)&BREG[rs], k16);
             break;      
         case BGTZ:
-            i_bgtz(&BREG[rs], k16);
+            i_bgtz((int32_t*)&BREG[rs], k16);
             break;  
         case ADDI:
-            BREG[rt] = i_addi(&BREG[rs], k16);
+            BREG[rt] = i_addi((int32_t*)&BREG[rs], k16);
             break;
         case ADDIU:
-            BREG[rt] = i_addi(&BREG[rs], k16);
+            BREG[rt] = i_addiu(&BREG[rs], k16);
             break;      
         case SLTI:
-            BREG[rt] = i_slti(&BREG[rs], k16);
+            BREG[rt] = i_slti((int32_t*)&BREG[rs], k16);
             break; 
         case SLTIU:
             BREG[rt] = i_sltiu(&BREG[rs], k16);

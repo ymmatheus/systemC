@@ -5,9 +5,15 @@
  *
  *
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#ifndef MIPS
+
+#define MIPS
+
+#include "mips.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
 #define MEM_SIZE 8192
 
 //Memoria
@@ -35,3 +41,5 @@ uint32_t opcode,rs,rt,rd,shamnt,funct,k16,k26;
 
 //int FLAG_RUN=1;
 //int FLAG_STEP=1;
+
+#endif

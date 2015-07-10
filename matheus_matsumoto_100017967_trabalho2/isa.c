@@ -2,20 +2,18 @@
  *      Implementacao das instrucoes MIPS
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
-#ifndef ISA
 #include "isa.h"
-#define ISA
+
+
+    #include "mips.h"
+/*#ifndef MIPS
+    #define MIPS
+    #include "mips.h"
 #endif
-
-
-#ifndef MIPS
-#include "mips.h"
-#define MIPS
-#endif
-
+*/
 
 //lw $t1,-100($t2)        Load word : Set $t1 to contents of effective memory word address
 int32_t i_lw(uint32_t *address, int16_t kte){
@@ -124,6 +122,10 @@ int32_t i_addi(int32_t *rs, int16_t imm){
     return *rs+imm;
 }
 
+uint32_t i_addiu(uint32_t *rs, int16_t imm){
+    return *rs+imm;
+}
+
 //beq $t1,$t2,label       Branch if equal : Branch to statement at label's address if $t1 and $t2 are equal
 void i_beq(int32_t *rs, int32_t *rt, int32_t label){
     if(*rs == *rt){
@@ -164,7 +166,7 @@ int32_t i_slti(int32_t *rs, int16_t imm){
     }    
 }
 //sltiu $t1,$t2,-100      Set less than immediate unsigned : If $t2 is less than  sign-extended 16-bit immediate using unsigned comparison, then set $t1 to 1 else set $t1 to 0
-int32_t i_sltiu(int32_t *rs, int16_t imm){
+uint32_t i_sltiu(uint32_t *rs, int16_t imm){
     if(imm<0){
         return 0;
     }else{
@@ -178,15 +180,15 @@ int32_t i_sltiu(int32_t *rs, int16_t imm){
 
 }
 //andi $t1,$t2,100        Bitwise AND immediate : Set $t1 to bitwise AND of $t2 and zero-extended 16-bit immediate
-int32_t i_andi(int32_t *rs, int16_t imm){
+uint32_t i_andi(uint32_t *rs, int16_t imm){
     return *rs&imm;
 }
 //ori $t1,$t2,100         Bitwise OR immediate : Set $t1 to bitwise OR of $t2 and zero-extended 16-bit immediate
-int32_t i_ori(int32_t *rs, int16_t imm){
+uint32_t i_ori(uint32_t *rs, int16_t imm){
     return *rs|imm;
 }
 //xori $t1,$t2,100        Bitwise XOR immediate : Set $t1 to bitwise XOR of $t2 and zero-extended 16-bit immediate
-int32_t i_xori(int32_t *rs, int16_t imm){
+uint32_t i_xori(uint32_t *rs, int16_t imm){
     return *rs^imm;
 }
 //j target                Jump unconditionally : Jump to statement at target address
@@ -228,23 +230,23 @@ void i_div(int32_t *rs, int32_t *rt){
     return;
 }
 //and $t1,$t2,$t3         Bitwise AND : Set $t1 to bitwise AND of $t2 and $t3
-int32_t i_and(int32_t *rs, int32_t *rt){
+int32_t i_and(uint32_t *rs, uint32_t *rt){
     return *rs&*rt;
 }
 //or $t1,$t2,$t3          Bitwise OR : Set $t1 to bitwise OR of $t2 and $t3
-int32_t i_or(int32_t *rs, int32_t *rt){
+int32_t i_or(uint32_t *rs, uint32_t *rt){
     return *rs|*rt;
 }
 //xor $t1,$t2,$t3         Bitwise XOR (exclusive OR) : Set $t1 to bitwise XOR of $t2 and $t3
-int32_t i_xor(int32_t *rs, int32_t *rt){
+int32_t i_xor(uint32_t *rs, uint32_t *rt){
     return *rs^*rt;
 }
 //nor $t1,$t2,$t3         Bitwise NOR : Set $t1 to bitwise NOR of $t2 and $t3
-int32_t i_nor(int32_t *rs, int32_t *rt){
+int32_t i_nor(uint32_t *rs, uint32_t *rt){
     return 0xffffffff-(*rs|*rt);
 }
 //slt $t1,$t2,$t3         Set less than : If $t2 is less than $t3, then set $t1 to 1 else set $t1 to 0
-int32_t i_slt(int32_t *rs, int32_t *rt){
+int32_t i_slt(uint32_t *rs, uint32_t *rt){
     if(*rs < *rt){
         return 1;
     }else{
@@ -252,23 +254,23 @@ int32_t i_slt(int32_t *rs, int32_t *rt){
     }
 }
 //jr $t1                  Jump register unconditionally : Jump to statement whose address is in $t1
-void i_jr(int32_t *rs){
+void i_jr(uint32_t *rs){
     PC = *rs;
     //printf("PC:%x\n", PC );
     return;
 }
 //sll $t1,$t2,10          Shift left logical : Set $t1 to result of shifting $t2 left by number of bits specified by immediate
-int32_t i_sll(int32_t *rs, uint16_t imm){
-    return *rs<<imm;
+int32_t i_sll(uint32_t *rs, uint16_t shamnt){
+    return *rs<<shamnt;
 }
 //srl $t1,$t2,10          Shift right logical : Set $t1 to result of shifting $t2 right by number of bits specified by immediate
-int32_t i_srl(int32_t *rs, uint16_t imm){
-    return *rs>>imm;
+int32_t i_srl(uint32_t *rs, uint16_t shamnt){
+    return *rs>>shamnt;
 }
 //sra $t1,$t2,10          Shift right arithmetic : Set $t1 to result of sign-extended shifting $t2 right by number of bits specified by immediate
-int32_t i_sra(int32_t *rs, uint16_t imm){
+int32_t i_sra(uint32_t *rs, uint16_t shamnt){
     int32_t mask = 0x80000000;
-    return (*rs>>imm)|(*rs&mask);
+    return (*rs>>shamnt)|(*rs&mask);
 }
 //syscall                 Issue a system call : Execute the system call specified by value in $v0
 void i_syscall(){
