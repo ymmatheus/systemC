@@ -26,9 +26,9 @@
 #include <stdint.h>
 #include <string.h>
 
-/*A função unsigned  int32_t     fetch(uint32_t  pc) lê uma instrução da memória e coloca-
+/*A função unsigned  int     fetch(uint  pc) lê uma instrução da memória e coloca-
 a em ri, atualizando o pc para apontar para a próxima instrução (soma 4).*/
-uint32_t fetch(uint32_t pc){
+uint fetch(uint pc){
 
     RI=MEM[pc/4];
     pc+=4;
@@ -46,32 +46,32 @@ uint32_t fetch(uint32_t pc){
 - k26: constante de 26 bits, para instruções tipo J*/
 void decode(){
     
-    uint32_t funct_mask = 0x3f;//111111
+    uint funct_mask = 0x3f;//111111
     funct = RI&funct_mask;
 
-    uint32_t shamnt_shift=6;
-    uint32_t shamnt_mask = 0x7c0;//11111000000
+    uint shamnt_shift=6;
+    uint shamnt_mask = 0x7c0;//11111000000
     shamnt = (RI&shamnt_mask)>>shamnt_shift;
     
 
-    uint32_t rd_shift=11;
-    uint32_t rd_mask = 0xf800;//1111100000000000
+    uint rd_shift=11;
+    uint rd_mask = 0xf800;//1111100000000000
     rd = (RI&rd_mask)>>rd_shift;
 
     k16 = (funct|(shamnt<<shamnt_shift)|(rd<<rd_shift) );
     //printf("%d  %d\n", shamt, shamt_shift);
 
-    uint32_t rt_shift=16;
-    uint32_t rt_mask = 0x1f0000;//111110000000000000000
+    uint rt_shift=16;
+    uint rt_mask = 0x1f0000;//111110000000000000000
     rt = (RI&rt_mask)>>rt_shift;
     
-    uint32_t rs_shift=21;
-    uint32_t rs_mask = 0x3e00000;//11111000000000000000000000
+    uint rs_shift=21;
+    uint rs_mask = 0x3e00000;//11111000000000000000000000
     rs = (RI&rs_mask)>>rs_shift;
 
     k26 = k16|(rt<<rt_shift)|(rs<<rs_shift);
     
-    uint32_t opcode_shift=26;
+    uint opcode_shift=26;
     opcode = RI>>opcode_shift;
     
     //printf("funct %x\nshamt %x\nk16 %x\nrd %x\nrt %x\nrs %x\nk26 %x\nopcode %x\n", funct, shamt, k16, rd, rt, rs, k26, opcode);
@@ -89,13 +89,13 @@ void execute(){
                     BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
                     break;
 		case ADDU:
-                    BREG[rd] = i_addu(&BREG[rs], &BREG[rt]);
+                    BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
                     break;
                 case SUB:
                     BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
                     break;
 		case SUBU:
-                    BREG[rd] = i_subu(&BREG[rs], &BREG[rt]);
+                    BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
                     break;
                 case MULT:
                     i_mult(&BREG[rs], &BREG[rt]);
@@ -122,24 +122,29 @@ void execute(){
                     i_jr(&BREG[rs]);
                     break;
                 case SLL:
-                    BREG[rt] = i_sll(&BREG[rs], k16);
+                    BREG[rd] = i_sll(&BREG[rt], shamnt);
                     break;
                 case SRL:
-                    BREG[rt] = i_srl(&BREG[rs], k16);
+                    BREG[rd] = i_srl(&BREG[rt], shamnt,&BREG[rs]);
                     break;
                 case SRA:
-                    BREG[rt] = i_sra(&BREG[rs], k16);
+                    BREG[rd] = i_sra(&BREG[rt], shamnt);
                     break;
                 case SYSCALL:
                     i_syscall();
                     break;
                 case MFHI:
-                    BREG[rt] = i_mfhi();
+                    BREG[rd] = i_mfhi();
                     break;
                 case MFLO:
-                    BREG[rt] = i_mflo();
+                    BREG[rd] = i_mflo();
                     break;
-
+		case MTHI:
+		    HI = i_mthi(&BREG[rs]);
+		    break;
+		case MTLO:
+		    LO = i_mtlo(&BREG[rs]);
+		    break;
             }
             break;
         case LW:
@@ -208,6 +213,10 @@ void execute(){
         case JAL:
             i_jal(k26);
             break;
+	case MUL:
+	    BREG[rd]= i_mul(&BREG[rs], &BREG[rt]);
+	case SE:
+	    BREG[rd]= i_se(&BREG[rt], shamnt);
         default:
             printf("Instrucao nao implementada!");
             break;

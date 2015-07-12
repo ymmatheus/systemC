@@ -12,13 +12,15 @@ enum OPCODES{
     SB=0x28,    SH=0x29,    BEQ=0x04,   BNE=0x05,  
     BLTZ=0x06,  BGEZ=0x07,  ADDI=0x08,  SLTI=0x0A, 
     SLTIU=0x0B, ANDI=0x0C,  ORI=0x0D,   XORI=0x0E, 
-    J=0x02,     JAL=0x03,   ADDIU=0x09
+    J=0x02,     JAL=0x03,   ADDIU=0x09, MUL=0x1C,
+    MTHI=0x11,  MTLO=0x13,  SE=0x1F
 }; 
 
 enum FUNCT {   
     ADD=0x20,   ADDU=0x21,  SUB=0x22,   MULT=0x18,   DIV=0x1A,     AND=0x24,  
     OR=0x25,    XOR=0x26,   NOR=0x27,   SLT=0x2A,       JR=0x08,  SUBU=0x23,
-    SLL=0x00,   SRL=0x02,   SRA=0x03,   SYSCALL=0x0c,   MFHI=0x10, MFLO=0x12
+    SLL=0x00,   SRL=0x02,   SRA=0x03,   SYSCALL=0x0c,   MFHI=0x10, MFLO=0x12,
+  
 };
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +69,8 @@ int32_t i_xori(int32_t *rs, int16_t imm);
 void i_j(int32_t label);
 //jal target              Jump and link : Set $ra to Program Counter (return address) then jump to statement at target address
 void i_jal(int32_t label);
-
+//mul $t1,$t2,$t3  	Multiplication without overflow: Sets the value of rd to the 32 least significant bits of the multiplication.
+int32_t i_mul(int32_t *rs, int32_t *rt);
 
 
 //Intrucoes para OPCODE = 0x000000
@@ -92,14 +95,22 @@ int32_t i_slt(int32_t *rs, int32_t *rt);
 //jr $t1                  Jump register unconditionally : Jump to statement whose address is in $t1
 void i_jr(int32_t *rs);
 //sll $t1,$t2,10          Shift left logical : Set $t1 to result of shifting $t2 left by number of bits specified by immediate
-int32_t i_sll(int32_t *rs, uint16_t imm);
+int32_t i_sll(int32_t *rt, int32_t shamnt);
 //srl $t1,$t2,10          Shift right logical : Set $t1 to result of shifting $t2 right by number of bits specified by immediate
-int32_t i_srl(int32_t *rs, uint16_t imm);
+int32_t i_srl(int32_t *rt, int32_t shamnt, int32_t *rs);
 //sra $t1,$t2,10          Shift right arithmetic : Set $t1 to result of sign-extended shifting $t2 right by number of bits specified by immediate
-int32_t i_sra(int32_t *rs, uint16_t imm);
+int32_t i_sra(int32_t *rt, int32_t shamnt);
 //syscall                 Issue a system call : Execute the system call specified by value in $v0
 void i_syscall();
 //mfhi $t1                Move from HI register : Set $t1 to contents of HI (see multiply and divide operations)
 int32_t i_mfhi();
 //mflo $t1                Move from LO register : Set $t1 to contents of LO (see multiply and divide operations)
 int32_t i_mflo();
+
+int32_t i_mthi(int32_t *rs);
+
+int32_t i_mtlo(int32_t *rs);
+
+int32_t i_se(int32_t *rt, int32_t shamnt);
+
+

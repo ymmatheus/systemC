@@ -259,17 +259,22 @@ void i_jr(int32_t *rs){
     return;
 }
 //sll $t1,$t2,10          Shift left logical : Set $t1 to result of shifting $t2 left by number of bits specified by immediate
-int32_t i_sll(int32_t *rs, uint16_t imm){
-    return *rs<<imm;
+int32_t i_sll(int32_t *rt, int32_t shamnt){
+    return *rt<<shamnt;
 }
 //srl $t1,$t2,10          Shift right logical : Set $t1 to result of shifting $t2 right by number of bits specified by immediate
-int32_t i_srl(int32_t *rs, uint16_t imm){
-    return *rs>>imm;
+int32_t i_srl(int32_t *rt, int32_t shamnt, int32_t *rs){
+    if(*rs==0){
+	return *rt>>shamnt;
+    }
+    else{
+	return ((*rt<<(32 - shamnt)) || (*rt >> shamnt));
+    }
 }
 //sra $t1,$t2,10          Shift right arithmetic : Set $t1 to result of sign-extended shifting $t2 right by number of bits specified by immediate
-int32_t i_sra(int32_t *rs, uint16_t imm){
+int32_t i_sra(int32_t *rt, int32_t shamnt){
     int32_t mask = 0x80000000;
-    return (*rs>>imm)|(*rs&mask);
+    return (*rt>>shamnt)|(*rt&mask);
 }
 //syscall                 Issue a system call : Execute the system call specified by value in $v0
 void i_syscall(){
@@ -322,3 +327,35 @@ int32_t i_mfhi(){
 int32_t i_mflo(){
     return LO;
 }
+
+// mul $t1,$t2,$t3
+int32_t i_mul(int32_t *rs, int32_t *rt){
+	return (*rs)*(*rt);
+}
+
+int32_t i_mthi(int32_t *rs){
+	return *rs;
+}
+int32_t i_mtlo(int32_t *rs){
+	return *rs;
+}
+int32_t i_se(int32_t *rt, int32_t shamnt){
+
+	if(shamnt==00000000000000000000000000010000){
+		if(((*rt <<24)>>31)==1){
+			return (*rt || 0xFFFF0000);
+		}
+		else {
+			return (*rt || 0x00000000);
+		}
+	}
+	else{	
+		if(((*rt <<16)>>31)==1){
+			return (*rt || 0xFFFF0000);
+		}
+		else {
+			return (*rt || 0x00000000);
+		}
+	}
+}
+

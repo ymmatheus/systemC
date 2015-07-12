@@ -122,24 +122,29 @@ void execute(){
                     i_jr(&BREG[rs]);
                     break;
                 case SLL:
-                    BREG[rt] = i_sll(&BREG[rs], k16);
+                    BREG[rd] = i_sll(&BREG[rt], shamnt);
                     break;
                 case SRL:
-                    BREG[rt] = i_srl(&BREG[rs], k16);
+                    BREG[rd] = i_srl(&BREG[rt], shamnt,&BREG[rs]);
                     break;
                 case SRA:
-                    BREG[rt] = i_sra(&BREG[rs], k16);
+                    BREG[rd] = i_sra(&BREG[rt], shamnt);
                     break;
                 case SYSCALL:
                     i_syscall();
                     break;
                 case MFHI:
-                    BREG[rt] = i_mfhi();
+                    BREG[rd] = i_mfhi();
                     break;
                 case MFLO:
-                    BREG[rt] = i_mflo();
+                    BREG[rd] = i_mflo();
                     break;
-
+		case MTHI:
+		    HI = i_mthi(&BREG[rs]);
+		    break;
+		case MTLO:
+		    LO = i_mtlo(&BREG[rs]);
+		    break;
             }
             break;
         case LW:
@@ -208,6 +213,10 @@ void execute(){
         case JAL:
             i_jal(k26);
             break;
+	case MUL:
+	    BREG[rd]= i_mul(&BREG[rs], &BREG[rt]);
+	case SE:
+	    BREG[rd]= i_se(&BREG[rt], shamnt);
         default:
             printf("Instrucao nao implementada!");
             break;
