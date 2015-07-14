@@ -5,33 +5,37 @@
 #include "systemc.h"
 #include "simple_mips.h"
 
+unsigned int BREG[32];
+unsigned int PC;
+int RI;
+int HI;
+int LO;
+
+unsigned int opcode,rs,rt,rd,shamnt,funct,k16,k26;
+
 
 void simple_mips::fetch(){
-    wait(mem_init);
-    pipeline_sigs instr;
-    int RI;
+
     PC = m_inst_address;
 
     wait(); // ... for the next rising clock edge
     while (true){
 
-/*        bus_port->read(m_unique_priority, &RI, PC, m_lock);
+        bus_port->read(m_unique_priority, &RI, PC, m_lock);
         while ((bus_port->get_status(m_unique_priority) != SIMPLE_BUS_OK) &&
                     (bus_port->get_status(m_unique_priority) != SIMPLE_BUS_ERROR))
             wait();
         if (bus_port->get_status(m_unique_priority) == SIMPLE_BUS_ERROR)
             sb_fprintf(stdout, "%g %s : ERROR cannot read from %x\n",
-        sc_time_stamp(), name(), PC);*/
-        data_init_mem[PC/4];
-
-        
+        sc_time_stamp(), name(), PC);
+ 
         
         PC+=4; // next word (byte addressing)
         if (PC > (m_inst_address+0x80)) {
             PC = m_inst_address;
         }
         
-        cout << sc_time_stamp() << " Fetch: " << RI << endl;
+        cout << sc_time_stamp() << " Fetch: "<< hex << RI << endl;
         
         // Escreve na fila
         IfId.write(RI);
@@ -42,48 +46,47 @@ void simple_mips::fetch(){
 
 
 void simple_mips::decode(){
-    wait(mem_init);
 
     pipeline_sigs instr;
-    int RI;
+
     wait();
     while (true){
 
         
 
         if (IfId.nb_read(RI)) {
-            cout << sc_time_stamp() << " Decode: " << RI << endl;
+            cout << sc_time_stamp() << " Decode: "<< hex << RI << endl;
         } else {
             std::cout << sc_time_stamp() << " Decode: Fila vazia! " << std::endl;
         }
 
-    uint32_t funct_mask = 0x3f;//111111
-    funct = RI&funct_mask;
+        unsigned int funct_mask = 0x3f;//111111
+        funct = RI&funct_mask;
 
-    uint32_t shamnt_shift=6;
-    uint32_t shamnt_mask = 0x7c0;//11111000000
-    shamnt = (RI&shamnt_mask)>>shamnt_shift;
-    
+        unsigned int shamnt_shift=6;
+        unsigned int shamnt_mask = 0x7c0;//11111000000
+        shamnt = (RI&shamnt_mask)>>shamnt_shift;
+        
 
-    uint32_t rd_shift=11;
-    uint32_t rd_mask = 0xf800;//1111100000000000
-    rd = (RI&rd_mask)>>rd_shift;
+        unsigned int rd_shift=11;
+        unsigned int rd_mask = 0xf800;//1111100000000000
+        rd = (RI&rd_mask)>>rd_shift;
 
-    k16 = (funct|(shamnt<<shamnt_shift)|(rd<<rd_shift) );
-    //printf("%d  %d\n", shamt, shamt_shift);
+        k16 = (funct|(shamnt<<shamnt_shift)|(rd<<rd_shift) );
+        //printf("%d  %d\n", shamt, shamt_shift);
 
-    uint32_t rt_shift=16;
-    uint32_t rt_mask = 0x1f0000;//111110000000000000000
-    rt = (RI&rt_mask)>>rt_shift;
-    
-    uint32_t rs_shift=21;
-    uint32_t rs_mask = 0x3e00000;//11111000000000000000000000
-    rs = (RI&rs_mask)>>rs_shift;
+        unsigned int rt_shift=16;
+        unsigned int rt_mask = 0x1f0000;//111110000000000000000
+        rt = (RI&rt_mask)>>rt_shift;
+        
+        unsigned int rs_shift=21;
+        unsigned int rs_mask = 0x3e00000;//11111000000000000000000000
+        rs = (RI&rs_mask)>>rs_shift;
 
-    k26 = k16|(rt<<rt_shift)|(rs<<rs_shift);
-    
-    uint32_t opcode_shift=26;
-    opcode = RI>>opcode_shift;
+        k26 = k16|(rt<<rt_shift)|(rs<<rs_shift);
+        
+        unsigned int opcode_shift=26;
+        opcode = RI>>opcode_shift;
 
 
 
@@ -96,9 +99,10 @@ void simple_mips::decode(){
 
 void simple_mips::execute(){
 
-    uint32_t memout=0;
+
     wait();
     while(true){
+
         switch(opcode){
 
             case EXT:
@@ -236,68 +240,4 @@ void simple_mips::execute(){
         }
 
     }
-}
-
-
-
-void simple_mips::init_mem_file(){
-    std::string line;
-    int dado;
-    ifstream datafile ("data.hex");
-    int addr = 0;
-    if (datafile.is_open()){
-        while ( getline (datafile,line) ){
-            
-            dado = strtol(line.c_str(), NULL, 16);
-            //cout <<"222 " << dado << '\n';
-            data_init_mem[addr] = dado;
-            addr+=1;
-
-        }
-        datafile.close();
-    }else 
-        cout << "Unable to open file";
-
-    addr=0;
-    ifstream textfile ("text.hex");
-    if (textfile.is_open()){
-        while ( getline (textfile,line) ){
-            dado = strtol(line.c_str(), NULL, 16);
-            //cout <<"222 " << dado << '\n';
-            text_init_mem[addr] = dado;
-            addr+=1;
-        }
-        textfile.close();
-    }else 
-        cout << "Unable to open file";
-
-
-    
-}
-
-void simple_mips::init_mem(){
-    int mydata;
-    int cnt = 0;
-    unsigned int addr = m_data_address;
-
-    wait(); // ... for the next rising clock edge
-    while (true)
-    {
-
-        mydata = data_init_mem[cnt];
-
-        bus_port->write(m_unique_priority, &mydata, addr, m_lock);
-        while ((bus_port->get_status(m_unique_priority) != SIMPLE_BUS_OK) &&
-               (bus_port->get_status(m_unique_priority) != SIMPLE_BUS_ERROR))
-            wait();
-        if (bus_port->get_status(m_unique_priority) == SIMPLE_BUS_ERROR)
-            sb_fprintf(stdout, "%g %s : ERROR cannot write to %x\n",
-                       sc_simulation_time(), name(), addr);
-        addr += 4;
-        cnt++;
-        
-        if( cnt == 30) break;
-
-    }
-    mem_init.notify();
 }

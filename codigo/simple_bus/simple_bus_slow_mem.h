@@ -71,9 +71,45 @@ public:
     sc_assert(m_start_address <= m_end_address);
     sc_assert((m_end_address-m_start_address+1)%4 == 0);
     unsigned int size = (m_end_address-m_start_address+1)/4;
+
+cout <<"mmem";
     MEM = new int [size];
-    for (unsigned int i = 0; i < size; ++i)
-      MEM[i] = 0;
+    unsigned int i=0;
+    
+    std::string line;
+    int dado;
+    ifstream datafile ("data.hex");
+    int addr = 0;    ifstream textfile ("text.hex");
+    
+    if (textfile.is_open()){
+        while ( getline (textfile,line) ){
+            dado = strtol(line.c_str(), NULL, 16);
+            //cout <<"222 " << dado << '\n';
+            MEM[i] = dado;
+            if(i<size) i++;
+        }
+        textfile.close();
+    }else 
+        cout << "Unable to open file";
+    
+
+
+    if (datafile.is_open()){
+        while ( getline (datafile,line) ){
+            
+            dado = strtol(line.c_str(), NULL, 16);
+            //cout <<"222 " << dado << '\n';
+            MEM[i] = dado;
+            if(i<size) i++;
+
+        }
+        datafile.close();
+    }else 
+        cout << "Unable to open file";
+
+
+
+
   }
 
   // destructor
