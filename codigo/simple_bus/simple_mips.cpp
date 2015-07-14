@@ -4,7 +4,7 @@
 
 #include "systemc.h"
 #include "simple_mips.h"
-#include "isa.h"
+
 
 void simple_mips::fetch(){
     wait(mem_init);
@@ -96,153 +96,146 @@ void simple_mips::decode(){
 
 void simple_mips::execute(){
 
+    uint32_t memout=0;
     wait();
     while(true){
-    switch(opcode){
+        switch(opcode){
 
-        case EXT:
-            switch(funct){
-                case ADD:
-                    BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
-                    break;
-                case ADDU:
-                    BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
-                    break;
-                case SUB:
-                    BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
-                    break;
-                case SUBU:
-                    BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
-                    break;
-                case MULT:
-                    i_mult(&BREG[rs], &BREG[rt]);
-                    break;
-                case DIV:
-                    i_div(&BREG[rs], &BREG[rt]);
-                    break;
-                case AND:
-                    BREG[rd] = i_and(&BREG[rs], &BREG[rt]);
-                    break;
-                case OR:
-                    BREG[rd] = i_or(&BREG[rs], &BREG[rt]);
-                    break;
-                case XOR:
-                    BREG[rd] = i_or(&BREG[rs], &BREG[rt]);
-                    break;
-                case NOR:
-                    BREG[rd] = i_nor(&BREG[rs], &BREG[rt]);
-                    break;
-                case SLT:
-                    BREG[rd] = i_slt(&BREG[rs], &BREG[rt]);
-                    break;
-                case JR:
-                    i_jr(&BREG[rs]);
-                    break;
-                case SLL:
-                    BREG[rd] = i_sll(&BREG[rt], shamnt);
-                    break;
-                case SRL:
-                    BREG[rd] = i_srl(&BREG[rt], shamnt,&BREG[rs]);
-                    break;
-                case SRA:
-                    BREG[rd] = i_sra(&BREG[rt], shamnt);
-                    break;
-                case SYSCALL:
-                    i_syscall();
-                    break;
-                case MFHI:
-                    BREG[rd] = i_mfhi();
-                    break;
-                case MFLO:
-                    BREG[rd] = i_mflo();
-                    break;
-        case MTHI:
-            HI = i_mthi(&BREG[rs]);
-            break;
-        case MTLO:
-            LO = i_mtlo(&BREG[rs]);
-            break;
+            case EXT:
+                switch(funct){
+                    case ADD:
+                        BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
+                        break;
+                    case ADDU:
+                        BREG[rd] = i_add(&BREG[rs], &BREG[rt]);
+                        break;
+                    case SUB:
+                        BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
+                        break;
+                    case SUBU:
+                        BREG[rd] = i_sub(&BREG[rs], &BREG[rt]);
+                        break;
+                    case MULT:
+                        i_mult(&BREG[rs], &BREG[rt]);
+                        break;
+                    case DIV:
+                        i_div(&BREG[rs], &BREG[rt]);
+                        break;
+                    case AND:
+                        BREG[rd] = i_and(&BREG[rs], &BREG[rt]);
+                        break;
+                    case OR:
+                        BREG[rd] = i_or(&BREG[rs], &BREG[rt]);
+                        break;
+                    case XOR:
+                        BREG[rd] = i_or(&BREG[rs], &BREG[rt]);
+                        break;
+                    case NOR:
+                        BREG[rd] = i_nor(&BREG[rs], &BREG[rt]);
+                        break;
+                    case SLT:
+                        BREG[rd] = i_slt(&BREG[rs], &BREG[rt]);
+                        break;
+                    case JR:
+                        i_jr(&BREG[rs]);
+                        break;
+                    case SLL:
+                        BREG[rd] = i_sll(&BREG[rt], shamnt);
+                        break;
+                    case SRL:
+                        BREG[rd] = i_srl(&BREG[rt], shamnt,&BREG[rs]);
+                        break;
+                    case SRA:
+                        BREG[rd] = i_sra(&BREG[rt], shamnt);
+                        break;
+                    case SYSCALL:
+                        i_syscall();
+                        break;
+                    case MFHI:
+                        BREG[rd] = i_mfhi();
+                        break;
+                    case MFLO:
+                        BREG[rd] = i_mflo();
+                        break;
+                    case MTHI:
+                        HI = i_mthi(&BREG[rs]);
+                        break;
+                    case MTLO:
+                        LO = i_mtlo(&BREG[rs]);
+                        break;
             }
-            break;
-        case LW:
-            BREG[rt] = i_lw(&BREG[rs], k16);
-            break;
-        case LB:
-            BREG[rt] = i_lb(&BREG[rs], k16);
-            break;
-        case LBU:
-            BREG[rt] = i_lbu(&BREG[rs], k16);
-            break;
-        case LH:
-            BREG[rt] = i_lh(&BREG[rs], k16);
-            break;
-        case LHU:
-            BREG[rt] = i_lhu(&BREG[rs], k16);
-            break;
-        case LUI:
-            BREG[rt] = i_lui(k16);
-            break;
-        case SW:
-            i_sw(&BREG[rs], k16, BREG[rt]);
-            break;
-        case SB:
-            i_sb(&BREG[rs], k16, BREG[rt]);
-            break;
-        case SH:
-            i_sh(&BREG[rs], k16, BREG[rt]);
-            break;
-        case BEQ:
-            i_beq(&BREG[rs], &BREG[rt], k16);
-            break;
-        case BNE:
-            i_bne(&BREG[rs], &BREG[rt], k16);
-            break;          
-        case BLTZ:
-            i_bltz(&BREG[rs], k16);
-            break;      
-        case BGEZ:
-            i_bgez(&BREG[rs], k16);
-            break;  
-        case ADDI:
-            BREG[rt] = i_addi(&BREG[rs], k16);
-            break;
-        case ADDIU:
-            BREG[rt] = i_addi(&BREG[rs], k16);
-            break;      
-        case SLTI:
-            BREG[rt] = i_slti(&BREG[rs], k16);
-            break; 
-        case SLTIU:
-            BREG[rt] = i_sltiu(&BREG[rs], k16);
-            break; 
-        case ANDI:
-            BREG[rt] = i_andi(&BREG[rs], k16);
-            break;  
-        case ORI:
-            BREG[rt] = i_ori(&BREG[rs], k16);
-            break;
-        case XORI:
-            BREG[rt] = i_xori(&BREG[rs], k16);
-            break; 
-        case J:
-            i_j(k26);
-            break;
-        case JAL:
-            i_jal(k26);
-            break;
-        case MUL:
-            BREG[rd]= i_mul(&BREG[rs], &BREG[rt]);
-        case SE:
-            BREG[rd]= i_se(&BREG[rt], shamnt);
-            default:
-                printf("Instrucao nao implementada!");
+
+            case LW:
+                //BREG[rt] = i_lw(&BREG[rs], k16);
+                bus_port->read(m_unique_priority, &BREG[rt], (BREG[rs] + k16)/4, m_lock);
+                while ((bus_port->get_status(m_unique_priority) != SIMPLE_BUS_OK) &&
+                            (bus_port->get_status(m_unique_priority) != SIMPLE_BUS_ERROR))
+                    wait();
+                if (bus_port->get_status(m_unique_priority) == SIMPLE_BUS_ERROR)
+                    sb_fprintf(stdout, "%g %s : ERROR cannot read from %x\n",
+                sc_time_stamp(), name(), (BREG[rs] + k16)/4);
+
                 break;
+            case SW:
+                //i_sw(&BREG[rs], k16, BREG[rt]);
+                    bus_port->write(m_unique_priority, &BREG[rt], (BREG[rs] + k16)/4, m_lock);
+                    while ((bus_port->get_status(m_unique_priority) != SIMPLE_BUS_OK) &&
+                           (bus_port->get_status(m_unique_priority) != SIMPLE_BUS_ERROR))
+                        wait();
+                    if (bus_port->get_status(m_unique_priority) == SIMPLE_BUS_ERROR)
+                        sb_fprintf(stdout, "%g %s : ERROR cannot write to %x\n",
+                                   sc_simulation_time(), name(), (BREG[rs] + k16)/4);
+
+                break;
+            case BEQ:
+                i_beq(&BREG[rs], &BREG[rt], k16);
+                break;
+            case BNE:
+                i_bne(&BREG[rs], &BREG[rt], k16);
+                break;          
+            case BLTZ:
+                i_bltz(&BREG[rs], k16);
+                break;      
+            case BGEZ:
+                i_bgez(&BREG[rs], k16);
+                break;  
+            case ADDI:
+                BREG[rt] = i_addi(&BREG[rs], k16);
+                break;
+            case ADDIU:
+                BREG[rt] = i_addi(&BREG[rs], k16);
+                break;      
+            case SLTI:
+                BREG[rt] = i_slti(&BREG[rs], k16);
+                break; 
+            case SLTIU:
+                BREG[rt] = i_sltiu(&BREG[rs], k16);
+                break; 
+            case ANDI:
+                BREG[rt] = i_andi(&BREG[rs], k16);
+                break;  
+            case ORI:
+                BREG[rt] = i_ori(&BREG[rs], k16);
+                break;
+            case XORI:
+                BREG[rt] = i_xori(&BREG[rs], k16);
+                break; 
+            case J:
+                i_j(k26);
+                break;
+            case JAL:
+                i_jal(k26);
+                break;
+            case MUL:
+                BREG[rd]= i_mul(&BREG[rs], &BREG[rt]);
+            case SE:
+                BREG[rd]= i_se(&BREG[rt], shamnt);
+                default:
+                    printf("Instrucao nao implementada!");
+                    break;
+        }
+
     }
-
-
-
-    }
-
 }
 
 
@@ -255,7 +248,7 @@ void simple_mips::init_mem_file(){
     if (datafile.is_open()){
         while ( getline (datafile,line) ){
             
-            dado = strtol(line.c_str(), NULL, 1nstnstnst6);
+            dado = strtol(line.c_str(), NULL, 16);
             //cout <<"222 " << dado << '\n';
             data_init_mem[addr] = dado;
             addr+=1;
