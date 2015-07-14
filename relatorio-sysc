@@ -1,0 +1,12 @@
+Modelagem de Sistemas em Silício - 1/2015	
+
+Professor: Ricardo Pezzuol Jacobi
+
+Alunos:					Matrícula:
+
+Rafael Neiva da Cunha			13/0016594
+Matheus Yamamoto Matsumoto		10/0017967
+
+		Implementação Mips Pipeline em SystemC
+
+	Alguns detalhes da implementação: O arquivo simple_mips é um master non-blocking, ele executa 3 processos, o fetch, o decode e o execute e a comunicação entre os processos é feita através de filas, porém o controle do pipeline não foi implementado devido a falhas em outras etapas. As intruções load e store não estão corretamente implementadas, já que existe uma falha ao se carregar o valor do load, nas intruções do tipo branch o pc atualiza corretamente, porém ele não impede que a próxima instrução seja executado( ou seja, não faz um pulo). O processo do fetch lê do barramento o valor da instrução utilizando a memória lenta, atualiza o PC e coloca a instrução na fila. O processo do decode lê da fila e caso tenha alguma instrução ele faz o decode e cria um notify para o execute.
