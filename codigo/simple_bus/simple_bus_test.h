@@ -52,13 +52,14 @@ SC_MODULE(simple_bus_test)
   {
     // create instances
     
-    mem_slow = new simple_bus_slow_mem("mem_slow", 0x80, 0x28F, 1);
+    mem_slow = new simple_bus_slow_mem("mem_slow", 0x80, 0x28F, 4);
     bus = new simple_bus("bus",false); // verbose output
     //bus = new simple_bus("bus");
     arbiter = new simple_bus_arbiter("arbiter",false); // verbose output
     //arbiter = new simple_bus_arbiter("arbiter");
 
-    mips = new simple_mips("mips",3,0x80, 0x90,false, 20);
+                                    //0x90 = memoria dados    - 0x80 mem instr
+    mips = new simple_mips("mips",3,0x90, 0x80,false, 20);
 
     // connect instances
     
