@@ -48,8 +48,11 @@ enum FUNCT {
   
 };
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> da619533cf9a6c0504459318838e0372549f53a2
 SC_MODULE(simple_mips){
 
     sc_in_clk clock;
